@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>UMAR VERIFY</title>
+<style>
+:root{--blue:#12458c;--blue2:#1e65c8;--bg:#f4f7fc;--ink:#17243a;--muted:#68778d}
+*{box-sizing:border-box}body{margin:0;font:15px/1.5 Arial,sans-serif;background:var(--bg);color:var(--ink)}
+header{background:linear-gradient(120deg,#10366e,#1d65c8);color:#fff;padding:22px max(5%,calc((100% - 1100px)/2))}
+.brand{display:flex;align-items:center;gap:12px;font-weight:800;font-size:21px}.shield{width:42px;height:42px;border-radius:12px;background:#fff;color:var(--blue);display:grid;place-items:center;font-size:23px}
+nav{display:flex;gap:18px;flex-wrap:wrap;margin-top:18px}nav a{color:#e7f0ff;text-decoration:none;font-weight:600}
+main{max-width:1100px;margin:30px auto;padding:0 18px}.hero{background:#fff;border-radius:18px;padding:30px;box-shadow:0 8px 30px #102b5010}
+h1{font-size:clamp(28px,5vw,42px);margin:0 0 8px;color:#123d7d}.muted{color:var(--muted)}.pill{display:inline-block;background:#e8f1ff;color:#1554a6;padding:5px 10px;border-radius:30px;font-size:12px;font-weight:700}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-top:20px}.card{background:#fff;border-radius:15px;padding:20px;box-shadow:0 5px 20px #102b500d}.card h3{margin:5px 0;color:#173f78}.ico{font-size:28px}.btn{display:inline-block;border:0;border-radius:9px;background:var(--blue2);color:white;padding:11px 17px;font-weight:700;text-decoration:none;cursor:pointer}.btn.secondary{background:#e8f1ff;color:#164b91}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+section{margin-top:28px}.notice{background:#fff8e6;border-left:4px solid #e5a000;padding:13px 15px;border-radius:8px;color:#674d12}
+footer{text-align:center;color:var(--muted);padding:30px 15px;font-size:13px}
+label{display:block;font-weight:700;margin:12px 0 5px}input,select{width:100%;padding:12px;border:1px solid #ccd6e4;border-radius:8px;font:inherit;background:white}
+form{max-width:520px}.hidden{display:none}.tab{border:0;background:#e8f1ff;color:#174b91;padding:10px 14px;border-radius:8px;font-weight:700;cursor:pointer}.tab.active{background:#164f9f;color:white}
+</style>
+</head>
+<body>
+<header>
+ <div class="brand"><div class="shield">✓</div><div>UMAR VERIFY<small style="display:block;font-size:11px;font-weight:400;color:#d8e7ff">Secure Verification Platform</small></div></div>
+ <nav><a href="#home">Home</a><a href="#services">Services</a><a href="#account">Account</a><a href="#safety">Security</a></nav>
+</header>
+<main>
+ <div class="hero" id="home">
+  <span class="pill">WELCOME</span>
+  <h1>Identity services, made simpler.</h1>
+  <p class="muted">A clean starting point for UMAR VERIFY. Users will be able to create accounts, request approved verification services and track transactions.</p>
+  <div class="actions"><a class="btn" href="#account">Create an account</a><a class="btn secondary" href="#services">Explore services</a></div>
+ </div>
+ <section id="services"><h2>Our services</h2><div class="grid">
+  <article class="card"><div class="ico">🪪</div><h3>NIN Verification</h3><p class="muted">For authorised identity checks through an approved provider.</p></article>
+  <article class="card"><div class="ico">🏦</div><h3>BVN Verification</h3><p class="muted">For permitted bank identity checks through an approved provider.</p></article>
+  <article class="card"><div class="ico">👛</div><h3>Wallet</h3><p class="muted">Wallet funding and payment features will be connected securely.</p></article>
+  <article class="card"><div class="ico">📄</div><h3>Transaction history</h3><p class="muted">Users will be able to review their requests and payment status.</p></article>
+ </div></section>
+ <section id="account" class="card"><h2>Account access</h2><p class="muted">Design preview only. Secure registration and login will be connected to a backend before launch.</p>
+  <button class="tab active" type="button" onclick="showTab('register',this)">Register</button>
+  <button class="tab" type="button" onclick="showTab('login',this)">Login</button>
+  <form id="register" onsubmit="event.preventDefault();alert('Preview only: account creation is not active yet.');">
+   <label>Full name</label><input required placeholder="Enter your full name">
+   <label>Email address</label><input type="email" required placeholder="name@example.com">
+   <label>Phone number</label><input type="tel" required placeholder="080...">
+   <label>Password</label><input type="password" required minlength="8" placeholder="At least 8 characters">
+   <div class="actions"><button class="btn">Create account (preview)</button></div>
+  </form>
+  <form id="login" class="hidden" onsubmit="event.preventDefault();alert('Preview only: login is not active yet.');">
+   <label>Email address</label><input type="email" required placeholder="name@example.com">
+   <label>Password</label><input type="password" required placeholder="Your password">
+   <div class="actions"><button class="btn">Login (preview)</button></div>
+  </form>
+ </section>
+ <section id="safety" class="notice"><strong>Important security notice</strong><br>Do not collect or store NIN, BVN, passwords or OTPs in this demo. Live verification must use a properly authorised provider, secure server-side API integration, user consent, access controls and audit logs. This starter page does not perform real verification or payments.</section>
+</main>
+<footer>© 2026 UMAR VERIFY · Secure services require approved integrations.</footer>
+<script>
+function showTab(id,btn){document.getElementById('register').classList.toggle('hidden',id!=='register');document.getElementById('login').classList.toggle('hidden',id!=='login');document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));btn.classList.add('active')}
+</script>
+</body></html>
