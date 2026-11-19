@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#123b80"><title>UMAR VERIFY</title>
+<style>
+:root{--b:#123b80;--b2:#1e5bb8;--bg:#f3f6fb;--ink:#17243a;--muted:#64748b;--line:#dbe4f0}*{box-sizing:border-box}body{margin:0;font-family:system-ui,Arial,sans-serif;background:var(--bg);color:var(--ink)}header{background:linear-gradient(120deg,var(--b),var(--b2));color:white;padding:22px 18px}.wrap{max-width:760px;margin:auto}.brand{font-size:22px;font-weight:800}.tag{font-size:13px;opacity:.85}main{padding:20px 14px 45px}.card{background:white;border:1px solid var(--line);border-radius:18px;padding:20px;margin-bottom:16px;box-shadow:0 5px 18px #16345b0b}h1{font-size:23px;margin:0 0 8px}h2{font-size:18px}.muted{color:var(--muted);font-size:14px;line-height:1.5}label{display:block;font-weight:650;font-size:14px;margin:13px 0 6px}input,select{width:100%;padding:13px;border:1px solid #cbd5e1;border-radius:11px;font-size:16px;background:white}button{border:0;border-radius:11px;padding:13px 16px;background:var(--b2);color:white;font-weight:700;font-size:15px}.secondary{background:#e8effa;color:var(--b)}.danger{background:#9f2531}.actions{display:flex;gap:9px;margin-top:16px}.actions button{flex:1}.hidden{display:none!important}.notice{padding:12px;border-radius:11px;background:#edf4ff;color:#173f79;font-size:14px;margin-top:12px;overflow-wrap:anywhere}.error{background:#fff0f0;color:#9b2020}.success{background:#eaf8ef;color:#176334}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.stat{padding:15px;border:1px solid var(--line);border-radius:13px}.stat small{color:var(--muted)}.stat strong{display:block;font-size:21px;margin-top:5px}footer{text-align:center;color:var(--muted);font-size:12px}@media(max-width:480px){.card{padding:17px}}
+</style></head><body>
+<header><div class="wrap"><div class="brand">UMAR VERIFY</div><div class="tag">Simple • Secure • Reliable</div></div></header>
+<main class="wrap">
+<section id="auth" class="card"><h1>Welcome to UMAR VERIFY</h1><p class="muted">Create an account or sign in to continue.</p>
+<div id="signupFields"><label for="fullName">Full name</label><input id="fullName" autocomplete="name" placeholder="Your full name"></div>
+<label for="email">Email address</label><input id="email" type="email" autocomplete="email" placeholder="name@example.com">
+<label for="password">Password</label><input id="password" type="password" autocomplete="current-password" placeholder="At least 8 characters">
+<div class="actions"><button id="signupBtn">Create account</button><button id="loginBtn" class="secondary">Sign in</button></div><div id="authMsg" class="notice hidden"></div></section>
+<section id="dashboard" class="hidden">
+<div class="card"><h1 id="welcome">Dashboard</h1><p class="muted">You are signed in.</p><div class="grid"><div class="stat"><small>Wallet balance</small><strong id="balance">Loading…</strong></div><div class="stat"><small>Account status</small><strong>Active</strong></div></div><div class="actions"><button id="refreshBtn" class="secondary">Refresh</button><button id="logoutBtn" class="danger">Sign out</button></div><div id="dashMsg" class="notice hidden"></div></div>
+<div class="card"><h2>Verification service request</h2><p class="muted">Submitting a request does not perform identity verification. An authorised provider and approved API are required.</p><label for="serviceType">Service</label><select id="serviceType"><option value="NIN">NIN service</option><option value="BVN">BVN service</option></select><div class="actions"><button id="requestBtn">Submit request</button></div><div id="requestMsg" class="notice hidden"></div></div>
+<div class="card"><h2>Recent transactions</h2><div id="transactions" class="muted">No transactions loaded.</div></div></section></main><footer>UMAR VERIFY • Keep your password private.</footer>
+<script type="module">
+import{createClient}from'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+const supabase=createClient('https://ellekrfeigljxirlsizh.supabase.co','sb_publishable_AOHnuHxPnexaYJG4qHDobQ_0TfHxm_w');
+const $=id=>document.getElementById(id);
+function msg(id,text,kind=''){const e=$(id);e.textContent=text;e.className='notice '+kind;}
+function showAuth(){$('auth').classList.remove('hidden');$('dashboard').classList.add('hidden')}
+function showDash(){$('auth').classList.add('hidden');$('dashboard').classList.remove('hidden')}
+const money=v=>new Intl.NumberFormat('en-NG',{style:'currency',currency:'NGN'}).format(Number(v||0));
+async function load(user){showDash();$('welcome').textContent='Hello, '+(user.user_metadata?.full_name||user.email||'User');
+const{data:w,error:we}=await supabase.from('wallets').select('balance').eq('user_id',user.id).maybeSingle();
+$('balance').textContent=we?'Unavailable':money(w?.balance??0);if(we)msg('dashMsg','Wallet load error: '+we.message,'error');
+const{data:t,error:te}=await supabase.from('transactions').select('id,transaction_type,amount,status,created_at').eq('user_id',user.id).order('created_at',{ascending:false}).limit(5);
+$('transactions').textContent=te?'Could not load: '+te.message:(!t?.length?'No transactions yet.':t.map(x=>`${x.transaction_type} • ${money(x.amount)} • ${x.status}`).join(' | '));}
+$('signupBtn').onclick=async()=>{const name=$('fullName').value.trim(),email=$('email').value.trim(),password=$('password').value;if(!name||!email||password.length<8)return msg('authMsg','Enter your name, email and a password of at least 8 characters.','error');const{data,error}=await supabase.auth.signUp({email,password,options:{data:{full_name:name}}});if(error)msg('authMsg',error.message,'error');else if(data.session)await load(data.user);else msg('authMsg','Account created. Check your email for confirmation, then sign in.','success');};
+$('loginBtn').onclick=async()=>{const{data,error}=await supabase.auth.signInWithPassword({email:$('email').value.trim(),password:$('password').value});if(error)msg('authMsg',error.message,'error');else await load(data.user);};
+$('logoutBtn').onclick=async()=>{const{error}=await supabase.auth.signOut();if(error)msg('dashMsg',error.message,'error');else showAuth();};
+$('refreshBtn').onclick=async()=>{const{data:{user}}=await supabase.auth.getUser();if(user)await load(user);};
+$('requestBtn').onclick=async()=>{const{data:{user}}=await supabase.auth.getUser();if(!user)return msg('requestMsg','Please sign in again.','error');const{error}=await supabase.from('verification_requests').insert({user_id:user.id,service_type:$('serviceType').value});if(error)msg('requestMsg',error.message,'error');else msg('requestMsg',$('serviceType').value+' request submitted. This is a request only, not a completed verification.','success');};
+const{data:{session}}=await supabase.auth.getSession();if(session?.user)await load(session.user);else showAuth();
+supabase.auth.onAuthStateChange((_event,s)=>{if(s?.user)load(s.user);else showAuth();});
+</script></body></html>
